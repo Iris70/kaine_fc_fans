@@ -1,0 +1,306 @@
+<?php 
+session_start();
+include('connection.php');
+if(!isset($_SESSION['u_name'])){
+    header('location:index.php');
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap-5.0.2\bootstrap-5.0.2\dist\css\bootstrap.css">
+    <script src="bootstrap-5.0.2\bootstrap-5.0.2\dist\js\bootstrap.js"></script>
+    <script src="jquery.min.js"></script>
+   <link rel="stylesheet" href="mydesign.css">
+   <link rel="stylesheet" href="fontawesome\font\css\all.min.css">
+</head>
+<body>
+    <script>
+        $(document).ready(function(){
+            $('.modal').modal('show');
+        })
+    </script>
+   <div class='flex-box'>
+<!-- start of left -->
+<div  class="flex-box-item left">
+<div class='visit'>
+<h2 class='hd-visit'>Visit Also</h2>
+<ul>
+    <li><a href="http://www.fifa.com">Fifa</a></li>
+    <li><a href="http://www.Minisante.com">Minisante</a></li>
+    <li><a href="http://www.Ferwafa.com">Ferwafa</a></li>
+</ul>
+</div>
+</div>
+<!-- start middle  -->
+<div  class="flex-box-item middle">
+
+<h2 class='hd'>Kaine Fc</h2>
+
+<div class="staff">
+
+<div class='rows'>
+    <span>Presindent: </span><span> Jeff MUHINYUZA</span>
+</div>
+
+<div class='rows'>
+    <span>Manager: </span><span> Dreck GATO</span>
+</div>
+
+<div class='rows'>
+    <span>Secretary: </span><span> Jeanne KAYITERA</span>
+</div>
+
+<div class='rows'>
+    <span>Captain: </span><span> Rico Pie</span>
+</div>
+
+<div class='rows'>
+    <span>Accountant: </span><span> Monday Chrito</span>
+</div>
+
+</div>
+
+<div class="contents">
+    <?php
+// update fans starts
+
+
+
+if(isset($_POST['u_meetings'])){
+    // <!-- f_id	f_name	l_name	age	sex	telephone	 -->
+    $m_id=$_POST['m_id'];
+    $purpose=$_POST['purpose'];
+    $location=$_POST['location'];
+    
+    $error=array();
+    //validation
+    if(!preg_match('/^[a-zA-Z ]*$/',$location)){
+        array_push($error,"location must have letters only");
+
+    }
+ 
+  
+    
+if(count($error)==0){
+    $insert=mysqli_query($conn,"UPDATE `meetings` SET `purpose` = '$purpose', `location` = '$location' WHERE `meetings`.`m_id` = '$m_id';");
+
+}
+if(count($error)!=0){
+foreach($error as $item){
+    ?>
+    <div class='result bg-danger'>
+        <?php  echo $item ?> 
+
+    </div>
+    <?php 
+}
+}
+
+
+}
+
+
+
+?>
+
+<!-- // update fans ends -->
+    
+<?php 
+if(isset($_POST['meetings'])){
+    // <!-- m_id	purpose	location	 -->
+
+  
+    
+
+$temp=0;
+$sql="INSERT INTO `meetings` (`m_id`, `purpose`, `location`) VALUES ";
+    for($i=0;$i<count($_POST['purpose']);$i++){
+        if(!preg_match('/^[a-zA-Z ]*$/',$_POST['location'][$i])){
+            // array_push($error,"location must have letters only");
+        $temp=1;
+
+        }
+     
+        $arrays[]="(null,'{$_POST["purpose"][$i]}','{$_POST["location"][$i]}')";
+
+    }
+    if($temp==1){
+        ?>
+        <script>
+            alert('Location has only letters');
+        </script>
+        <?php
+    }
+    else{
+        // $insert=mysqli_query($conn,"INSERT INTO `meetings` (`m_id`, `purpose`, `location`) VALUES (NULL, '$purpose', '$location');");
+$sql .=implode(',',$arrays);
+mysqli_query($conn,$sql);
+    }
+
+    // print_r($arrays);
+    
+
+}
+
+
+
+?>
+
+<script>
+    $(document).ready(function(){
+        $('#table-ap').on('click','.add',function(){
+            $('#table-ap').append("<tr><td><input type='text' name='purpose[]' class='form-control' required> </td><td><input type='text' name='location[]' class='form-control' required>  </td><td><button type='button' class='btn add bg-green color-w'><i class='fa fa-plus'></i></button></td><td><button type='button' class='btn remove bg-danger color-w'><i class='fa fa-minus'></i></button></td></tr>").fadeIn('slow');
+            
+
+        })
+        $('#table-ap').on('click','.remove',function(){
+            $(this).parent().parent().remove().fadeOut('slow');
+
+
+        })
+    })
+</script>
+<div class="modal fade" id="mymodal">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Insert Mettings</h5>
+                    <button type='button' class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+                <form action="" method="post">
+                <table class='table' id='table-ap'>
+                    <tr class='hd-tr'>
+                        <th>Purpose</th>
+                        <th>Location</th>
+                        <th>Add</th>
+                        <th>Remove</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name='purpose[]' class="form-control" required>  </td>
+                        <td><input type="text" name='location[]' class="form-control" required>  </td>
+                        <td><button type='button' class='btn add bg-green color-w'><i class='fa fa-plus'></i></button></td>
+                        <td><button type='button' class='btn remove bg-danger color-w'><i class='fa fa-minus'></i></button></td>
+                    </tr>
+                   
+                </table> 
+                
+                
+                  
+
+                     
+                        <!-- m_id	purpose	location	 -->
+
+                    
+                
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name='meetings' class="btn bg-green w-25 color-w">Insert</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn bg-secondary color-w w-25">Cancel</button>
+                </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class='table-wrapper'>
+
+<div class='table-hd p-2'>
+    <button type='button' class='bg-green w-25 btn color-w' data-bs-target='#mymodal' data-bs-toggle='modal'>New</button>
+</div>
+<table class='table'>
+<!-- f_id	f_name	l_name	age	sex	telephone	 -->
+<!-- m_id	purpose	location	 -->
+	<tr class='hd-tr'>
+          <th>metting Id</th>
+          <th>purpose</th>
+          <th>Location</th>
+          <th>Delete</th>
+          <th>Update</th>
+    </tr>
+    <?php
+    $result=mysqli_query($conn,"SELECT * from meetings");
+    while($row=mysqli_fetch_array($result)){
+        ?>
+        <tr>
+        <td><?php echo $row['m_id'] ?></td>
+        <td><?php echo $row['purpose'] ?></td>
+        <td><?php echo $row['location'] ?></td>
+     
+        <td><a href="delete.php?m_id=<?php echo $row['m_id'] ?>" class='btn color-green'><i class='fa fa-trash color-g'></i> Delete</a></td>
+        <td><a href="update.php?m_id=<?php echo $row['m_id'] ?>" class='btn color-green'><i class='fa fa-edit color-g'></i> Update</a></td>
+        </tr>
+        <?php 
+    }
+    ?>
+
+</table>
+
+</div>
+<!-- end of contents -->
+</div>
+
+
+
+
+
+<!-- last div middel -->
+</div>
+<!-- end of middle -->
+
+
+<!-- start of right -->
+
+<div class="flex-box-item right">
+    <div class="announcements">
+        <h2 class='hd-an'>announcements</h2>
+<p>CLUB Party at muhazi beach on 26th December 2022.</p>
+    </div>
+    <div class="navs">
+        <a href="fans.php" class="navs-item">Fans</a>
+        <a href="meeting.php" class="navs-item">Meeting</a>
+        <a href="paticipations.php" class="navs-item">Participation</a>
+        <a href="report.php" class="navs-item">report</a>
+         <a href="users.php" class="navs-item">My Account</a>
+    </div>
+   
+    <a href="logout.php?logout" class="logout">Logout</a>
+
+</div>
+
+
+
+
+
+   </div> 
+</body>
+</html>
